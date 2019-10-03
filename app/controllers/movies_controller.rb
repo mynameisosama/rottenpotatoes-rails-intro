@@ -13,10 +13,16 @@ class MoviesController < ApplicationController
   end
 
   def index
-    all_ratings = Movie.get_all_ratings
-    @movies = Movie.with_ratings(helper_rating(params[:ratings], all_ratings))
-                   .get_sorted(params[:sort])
-    @all_ratings = all_ratings
+    if(invalid_params())
+      flash.keep
+      redirect_to movies_path(ratings: params[:ratings], sort: params[:sort])
+    else
+      all_ratings = Movie.get_all_ratings
+      @movies = Movie.with_ratings(sanitize_rating(all_ratings))
+                     .get_sorted(params[:sort])
+      @all_ratings = all_ratings
+      update_session()
+    end
   end
 
   def new
