@@ -13,14 +13,18 @@ class MoviesController < ApplicationController
   end
 
   def index
+    # check if request parameters exist
     if(invalid_params())
+      # redirect with request paraemerts from session and keep flash messages
       flash.keep
       redirect_to movies_path(ratings: params[:ratings], sort: params[:sort])
     else
+      # filter with rating and sort if request paraemerts are there
       all_ratings = Movie.get_all_ratings
       @movies = Movie.with_ratings(sanitize_rating(all_ratings))
                      .get_sorted(params[:sort])
       @all_ratings = all_ratings
+      # update session with new request parameters
       update_session()
     end
   end
